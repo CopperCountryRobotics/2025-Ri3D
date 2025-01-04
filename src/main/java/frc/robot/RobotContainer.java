@@ -7,21 +7,21 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import frc.robot.Commands.TankDrive;
-import frc.robot.Subsystems.Drivetrain;
+import frc.robot.commands.TankDriveCommand;
+import frc.robot.subsystems.drive.Drivetrain;
 
 public class RobotContainer {
 
   private CommandJoystick driverController;
 
-  private final Drivetrain m_drive = new Drivetrain();
+  private final Drivetrain drive = new Drivetrain();
 
 
   public RobotContainer() {
 
     driverController = new CommandJoystick(0);
 
-    m_drive.setDefaultCommand(new TankDrive(m_drive, ()->driverController.getRawAxis(1), ()->driverController.getRawAxis(5)));
+    drive.setDefaultCommand(new TankDriveCommand(drive, ()->driverController.getRawAxis(1), ()->driverController.getRawAxis(5)));
 
     configureBindings();
   }
