@@ -5,14 +5,16 @@
 package frc.robot.subsystems.drive;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.SparkUtil;
@@ -24,14 +26,17 @@ public class Drivetrain extends SubsystemBase {
 
   private final DifferentialDrive drive;
 
+  private final DifferentialDriveKinematics kinematics;
+  private final DifferentialDriveOdometry odometry;
+
   /** Creates a new Drivetrain. */
   public Drivetrain() {
 
-    left1 = new SparkMax(DriveConstants.LEFT_ONE_CANID, MotorType.kBrushless);
-    left2 = new SparkMax(DriveConstants.LEFT_TWO_CANID, MotorType.kBrushless);
+    left1 = new SparkMax(DriveConstants.leftOneCANID, MotorType.kBrushless);
+    left2 = new SparkMax(DriveConstants.leftTwoCANID, MotorType.kBrushless);
 
-    right1 = new SparkMax(DriveConstants.RIGHT_ONE_CANID, MotorType.kBrushless);
-    right2 = new SparkMax(DriveConstants.LEFT_TWO_CANID, MotorType.kBrushless);
+    right1 = new SparkMax(DriveConstants.rightOneCANID, MotorType.kBrushless);
+    right2 = new SparkMax(DriveConstants.leftTwoCANID, MotorType.kBrushless);
 
     leftEncoder = left1.getEncoder();
     rightEncoder = right1.getEncoder();
@@ -64,7 +69,17 @@ public class Drivetrain extends SubsystemBase {
         () -> left2.configure(leftFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     SparkUtil.tryUntilOk(5, 
-        () -> left1.configure(leftFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+        () -> right1.configure(rightLeaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+
+    SparkUtil.tryUntilOk(5, 
+        () -> right2.configure(rightFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+
+    kinematics = new DifferentialDriveKinematics(DriveConstants.trackWidth);
+
+    odometry = new DifferentialDriveOdometry(
+        new Rotation2d(), 
+        0.0, 
+        0.0);
 
     drive = new DifferentialDrive(left1, right1);
   }
