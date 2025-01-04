@@ -57,13 +57,13 @@ public class Drivetrain extends SubsystemBase {
         .apply(globalConfig)
         .follow(right1);
 
-    SparkUtil.tryUntilOk(left1, 5, 
+    SparkUtil.tryUntilOk(5, 
         () -> left1.configure(globalConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
     
-    SparkUtil.tryUntilOk(left2, 5, 
+    SparkUtil.tryUntilOk(5, 
         () -> left2.configure(leftFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-    SparkUtil.tryUntilOk(left2, 5, 
+    SparkUtil.tryUntilOk(5, 
         () -> left1.configure(leftFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     drive = new DifferentialDrive(left1, right1);
