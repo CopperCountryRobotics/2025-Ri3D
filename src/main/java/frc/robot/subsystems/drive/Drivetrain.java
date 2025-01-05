@@ -4,9 +4,11 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -21,6 +23,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.PhoenixUtil;
 import frc.robot.util.SparkUtil;
 
 public class Drivetrain extends SubsystemBase {
@@ -89,6 +92,13 @@ public class Drivetrain extends SubsystemBase {
 
     gyro = new Pigeon2(DriveConstants.gyroCANID);
 
+    var gyroConfig = new Pigeon2Configuration();
+    gyroConfig.MountPose.MountPoseYaw = DriveConstants.gyroMountPose.getMeasureZ().in(Degrees);
+    gyroConfig.MountPose.MountPosePitch = DriveConstants.gyroMountPose.getMeasureY().in(Degrees);
+    gyroConfig.MountPose.MountPoseRoll = DriveConstants.gyroMountPose.getMeasureX().in(Degrees);
+
+    PhoenixUtil.tryUntilOk(5, () -> gyro.getConfigurator().apply(gyroConfig));
+
     kinematics = new DifferentialDriveKinematics(DriveConstants.trackWidth);
 
     odometry = new DifferentialDriveOdometry(
@@ -101,8 +111,10 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-
+    odometry.update(
+      gyro.getRotation2d(), 
+      leftEncoder.getPosition(), 
+      rightEncoder.getPosition());
   }
 
   public void tankDrive(double left, double right) {

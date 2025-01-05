@@ -4,12 +4,15 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 
 public class DriveConstants {
 
   public static final int gyroCANID = 1;
+
+  public static final Rotation3d gyroMountPose = new Rotation3d(0.0, 0.0, 0.0);
 
   public static final int leftOneCANID = 2;
   public static final int leftTwoCANID = 3;
