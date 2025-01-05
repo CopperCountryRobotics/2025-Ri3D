@@ -55,7 +55,7 @@ public class Drivetrain extends SubsystemBase {
     rightEncoder = right1.getEncoder();
 
     var globalConfig = new SparkMaxConfig();
-    var lefttLeaderConfig = new SparkMaxConfig();
+    var leftLeaderConfig = new SparkMaxConfig();
     var rightLeaderConfig = new SparkMaxConfig();
     var leftFollowerConfig = new SparkMaxConfig();
     var rightFollowerConfig = new SparkMaxConfig();
@@ -70,6 +70,7 @@ public class Drivetrain extends SubsystemBase {
         .velocityConversionFactor(DriveConstants.diveVelocityConversionFactor.in(MetersPerSecond))
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
+
     leftLeaderConfig
         .apply(globalConfig)
         .inverted(true);
