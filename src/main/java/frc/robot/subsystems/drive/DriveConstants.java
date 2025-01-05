@@ -37,7 +37,6 @@ public class DriveConstants {
   public static final Mass robotMass = Pounds.of(100);
   public static final MomentOfInertia moi = KilogramSquareMeters.of(1);
 
-  public static final Distance wheelRadius = Inches.of(4);
   public static final LinearVelocity maxVelocity = MetersPerSecond.of(12);
   public static final Current currentLimit = Amps.of(20);
   public static final double wheelCOF = 0;

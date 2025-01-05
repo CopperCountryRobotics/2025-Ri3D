@@ -140,8 +140,8 @@ public class Drivetrain extends SubsystemBase {
     return 
       kinematics.toChassisSpeeds(
         new DifferentialDriveWheelSpeeds(
-          rpmToMetersPerSecond(leftEncoder.getVelocity()),
-          rpmToMetersPerSecond(rightEncoder.getVelocity())
+          leftEncoder.getVelocity(),
+          rightEncoder.getVelocity()
         )
       );
   }
@@ -152,7 +152,4 @@ public class Drivetrain extends SubsystemBase {
     right1.set(wheelSpeeds.rightMetersPerSecond / DriveConstants.maxVelocity.in(MetersPerSecond));
   }
 
-  private double rpmToMetersPerSecond(double rpm) {
-    return 2 * Math.PI * DriveConstants.wheelRadius.in(Meters) * 2 * (rpm / 60);
-  }
 }

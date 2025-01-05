@@ -19,7 +19,7 @@ public class AutoGenerator {
     public AutoGenerator(Drivetrain drive) {
 
         ModuleConfig moduleConfig = new ModuleConfig(
-            DriveConstants.wheelRadius, 
+            DriveConstants.driveWheelRadius, 
             DriveConstants.maxVelocity,
             DriveConstants.wheelCOF,
             DCMotor.getNEO(4),
