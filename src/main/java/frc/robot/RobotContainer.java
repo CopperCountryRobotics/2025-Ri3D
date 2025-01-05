@@ -5,14 +5,14 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.ElevatorCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.ElevatorToPosition;
 import frc.robot.commands.TankDriveCommand;
 import frc.robot.subsystems.drive.Drivetrain;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 
 public class RobotContainer {
   /**
@@ -36,28 +36,24 @@ public class RobotContainer {
    * Up[-1,1]Down
    */
   private CommandJoystick driverController;
-  private CommandJoystick opController;
+  private CommandXboxController opController;
   
 
   private final Drivetrain drive = new Drivetrain();
 
-  private final Elevator elevate = new Elevator();
+  private final Elevator elevator = new Elevator();
 
 
   public RobotContainer() {
 
     driverController = new CommandJoystick(0);
-    opController = new CommandJoystick(1);
+    opController = new CommandXboxController(1);
 
     drive.setDefaultCommand(new TankDriveCommand(drive, ()->driverController.getRawAxis(1), ()->driverController.getRawAxis(5)));
-    new JoystickButton(opController.getHID(), 6).onTrue((new ElevatorCommand(elevate, true).withInterruptBehavior(InterruptionBehavior.kCancelSelf)));
-    new JoystickButton(opController.getHID(), 5).onTrue((new ElevatorCommand(elevate, false).withInterruptBehavior(InterruptionBehavior.kCancelSelf)));
 
-    configureBindings();
-  }
-
-  private void configureBindings() {
-    
+    opController.povUp().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.topHeight));
+    opController.povLeft().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.middleHeight));
+    opController.povDown().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.bottomHeight));
   }
 
   public Command getAutonomousCommand() {
