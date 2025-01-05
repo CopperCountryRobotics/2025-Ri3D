@@ -17,14 +17,14 @@ import edu.wpi.first.math.geometry.Rotation3d;
 
 public class DriveConstants {
 
-  public static final int gyroCANID = 1;
+  public static final int gyroCANID = 5;
 
   public static final Rotation3d gyroMountPose = new Rotation3d(0.0, 0.0, 0.0);
 
-  public static final int leftOneCANID = 2;
-  public static final int leftTwoCANID = 3;
-  public static final int rightOneCANID = 4;
-  public static final int rightTwoCANID = 5;
+  public static final int leftOneCANID = 1;
+  public static final int leftTwoCANID = 2;
+  public static final int rightOneCANID = 3;
+  public static final int rightTwoCANID = 4;
 
   public static final double driveGearRatio = 12.0;
   public static final Distance driveWheelRadius = Inches.of(4);

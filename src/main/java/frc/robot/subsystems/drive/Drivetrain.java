@@ -49,12 +49,13 @@ public class Drivetrain extends SubsystemBase {
     left2 = new SparkMax(DriveConstants.leftTwoCANID, MotorType.kBrushless);
 
     right1 = new SparkMax(DriveConstants.rightOneCANID, MotorType.kBrushless);
-    right2 = new SparkMax(DriveConstants.leftTwoCANID, MotorType.kBrushless);
+    right2 = new SparkMax(DriveConstants.rightTwoCANID, MotorType.kBrushless);
 
     leftEncoder = left1.getEncoder();
     rightEncoder = right1.getEncoder();
 
     var globalConfig = new SparkMaxConfig();
+    var lefttLeaderConfig = new SparkMaxConfig();
     var rightLeaderConfig = new SparkMaxConfig();
     var leftFollowerConfig = new SparkMaxConfig();
     var rightFollowerConfig = new SparkMaxConfig();
@@ -69,6 +70,9 @@ public class Drivetrain extends SubsystemBase {
         .velocityConversionFactor(DriveConstants.diveVelocityConversionFactor.in(MetersPerSecond))
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
+    leftLeaderConfig
+        .apply(globalConfig)
+        .inverted(true);
 
     leftFollowerConfig
         .apply(globalConfig)
@@ -76,14 +80,14 @@ public class Drivetrain extends SubsystemBase {
 
     rightLeaderConfig
         .apply(globalConfig)
-        .inverted(true);
+        .inverted(false);
 
     rightFollowerConfig
         .apply(globalConfig)
         .follow(right1);
 
     SparkUtil.tryUntilOk(5,
-        () -> left1.configure(globalConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+        () -> left1.configure(leftLeaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     SparkUtil.tryUntilOk(5,
         () -> left2.configure(leftFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));

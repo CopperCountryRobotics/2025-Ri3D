@@ -21,7 +21,7 @@ public class RobotContainer {
 
     driverController = new CommandJoystick(0);
 
-    drive.setDefaultCommand(new TankDriveCommand(drive, ()->driverController.getRawAxis(1), ()->driverController.getRawAxis(5)));
+    drive.setDefaultCommand(new TankDriveCommand(drive, ()->driverController.getRawAxis(1), ()->driverController.getRawAxis(3)));
 
     configureBindings();
   }
