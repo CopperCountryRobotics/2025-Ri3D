@@ -4,9 +4,12 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -23,12 +26,15 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.PhoenixUtil;
 import frc.robot.util.SparkUtil;
 
 public class Drivetrain extends SubsystemBase {
 
   private final SparkMax left1, left2, right1, right2;
   private final RelativeEncoder leftEncoder, rightEncoder;
+
+  private final Pigeon2 gyro;
 
   private final DifferentialDrive drive;
 
@@ -56,6 +62,13 @@ public class Drivetrain extends SubsystemBase {
         .smartCurrentLimit(50)
         .idleMode(IdleMode.kBrake);
 
+    globalConfig
+        .encoder
+        .positionConversionFactor(DriveConstants.divePositionConversionFactor.in(Meters))
+        .velocityConversionFactor(DriveConstants.diveVelocityConversionFactor.in(MetersPerSecond))
+        .uvwMeasurementPeriod(10)
+        .uvwAverageDepth(2);
+
     leftFollowerConfig
         .apply(globalConfig)
         .follow(left1);
@@ -68,23 +81,32 @@ public class Drivetrain extends SubsystemBase {
         .apply(globalConfig)
         .follow(right1);
 
-    SparkUtil.tryUntilOk(5, 
+    SparkUtil.tryUntilOk(5,
         () -> left1.configure(globalConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
-    
-    SparkUtil.tryUntilOk(5, 
+
+    SparkUtil.tryUntilOk(5,
         () -> left2.configure(leftFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-    SparkUtil.tryUntilOk(5, 
+    SparkUtil.tryUntilOk(5,
         () -> right1.configure(rightLeaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-    SparkUtil.tryUntilOk(5, 
+    SparkUtil.tryUntilOk(5,
         () -> right2.configure(rightFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+
+    gyro = new Pigeon2(DriveConstants.gyroCANID);
+
+    var gyroConfig = new Pigeon2Configuration();
+    gyroConfig.MountPose.MountPoseYaw = DriveConstants.gyroMountPose.getMeasureZ().in(Degrees);
+    gyroConfig.MountPose.MountPosePitch = DriveConstants.gyroMountPose.getMeasureY().in(Degrees);
+    gyroConfig.MountPose.MountPoseRoll = DriveConstants.gyroMountPose.getMeasureX().in(Degrees);
+
+    PhoenixUtil.tryUntilOk(5, () -> gyro.getConfigurator().apply(gyroConfig));
 
     kinematics = new DifferentialDriveKinematics(DriveConstants.trackWidth);
 
     odometry = new DifferentialDriveOdometry(
-        new Rotation2d(), 
-        0.0, 
+        new Rotation2d(),
+        0.0,
         0.0);
 
     drive = new DifferentialDrive(left1, right1);
@@ -92,7 +114,10 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    odometry.update(
+      gyro.getRotation2d(), 
+      leftEncoder.getPosition(), 
+      rightEncoder.getPosition());
   }
 
   public void tankDrive(double left, double right) {
