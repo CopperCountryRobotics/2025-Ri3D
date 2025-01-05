@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -59,7 +60,7 @@ public class Drivetrain extends SubsystemBase {
     var rightFollowerConfig = new SparkMaxConfig();
 
     globalConfig
-        .smartCurrentLimit(50)
+        .smartCurrentLimit((int) DriveConstants.currentLimit.in(Amps))
         .idleMode(IdleMode.kBrake);
 
     globalConfig

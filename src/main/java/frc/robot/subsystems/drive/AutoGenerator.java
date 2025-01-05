@@ -22,7 +22,7 @@ public class AutoGenerator {
             DriveConstants.driveWheelRadius, 
             DriveConstants.maxVelocity,
             DriveConstants.wheelCOF,
-            DCMotor.getNEO(4),
+            DCMotor.getNEO(2).withReduction(DriveConstants.driveGearRatio),
             DriveConstants.currentLimit,
             4
         );
