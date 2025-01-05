@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -12,9 +15,12 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.SparkUtil;
@@ -95,5 +101,33 @@ public class Drivetrain extends SubsystemBase {
 
   public void arcadeDrive(double fwd, double turn) {
     drive.arcadeDrive(fwd, turn, true);
+  }
+
+  public Pose2d getCurrentPose() {
+    return odometry.getPoseMeters();
+  }
+
+  public void resetPose(Pose2d reset) {
+    odometry.resetPose(reset);
+  }
+
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+    return 
+      kinematics.toChassisSpeeds(
+        new DifferentialDriveWheelSpeeds(
+          rpmToMetersPerSecond(leftEncoder.getVelocity()),
+          rpmToMetersPerSecond(rightEncoder.getVelocity())
+        )
+      );
+  }
+
+  public void driveRobotRelative(ChassisSpeeds speed) {
+    var wheelSpeeds = kinematics.toWheelSpeeds(speed);
+    left1.set(wheelSpeeds.leftMetersPerSecond / DriveConstants.maxVelocity.in(MetersPerSecond));
+    right1.set(wheelSpeeds.rightMetersPerSecond / DriveConstants.maxVelocity.in(MetersPerSecond));
+  }
+
+  private double rpmToMetersPerSecond(double rpm) {
+    return 2 * Math.PI * DriveConstants.wheelRadius.in(Meters) * 2 * (rpm / 60);
   }
 }
