@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -18,9 +19,12 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.PhoenixUtil;
@@ -45,18 +49,19 @@ public class Drivetrain extends SubsystemBase {
     left2 = new SparkMax(DriveConstants.leftTwoCANID, MotorType.kBrushless);
 
     right1 = new SparkMax(DriveConstants.rightOneCANID, MotorType.kBrushless);
-    right2 = new SparkMax(DriveConstants.leftTwoCANID, MotorType.kBrushless);
+    right2 = new SparkMax(DriveConstants.rightTwoCANID, MotorType.kBrushless);
 
     leftEncoder = left1.getEncoder();
     rightEncoder = right1.getEncoder();
 
     var globalConfig = new SparkMaxConfig();
+    var leftLeaderConfig = new SparkMaxConfig();
     var rightLeaderConfig = new SparkMaxConfig();
     var leftFollowerConfig = new SparkMaxConfig();
     var rightFollowerConfig = new SparkMaxConfig();
 
     globalConfig
-        .smartCurrentLimit(50)
+        .smartCurrentLimit((int) DriveConstants.currentLimit.in(Amps))
         .idleMode(IdleMode.kBrake);
 
     globalConfig
@@ -66,20 +71,24 @@ public class Drivetrain extends SubsystemBase {
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
 
+    leftLeaderConfig
+        .apply(globalConfig)
+        .inverted(true);
+
     leftFollowerConfig
         .apply(globalConfig)
         .follow(left1);
 
     rightLeaderConfig
         .apply(globalConfig)
-        .inverted(true);
+        .inverted(false);
 
     rightFollowerConfig
         .apply(globalConfig)
         .follow(right1);
 
     SparkUtil.tryUntilOk(5,
-        () -> left1.configure(globalConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+        () -> left1.configure(leftLeaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     SparkUtil.tryUntilOk(5,
         () -> left2.configure(leftFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
@@ -124,4 +133,29 @@ public class Drivetrain extends SubsystemBase {
   public void arcadeDrive(double fwd, double turn) {
     drive.arcadeDrive(fwd, turn, true);
   }
+
+  public Pose2d getCurrentPose() {
+    return odometry.getPoseMeters();
+  }
+
+  public void resetPose(Pose2d reset) {
+    odometry.resetPose(reset);
+  }
+
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+    return 
+      kinematics.toChassisSpeeds(
+        new DifferentialDriveWheelSpeeds(
+          leftEncoder.getVelocity(),
+          rightEncoder.getVelocity()
+        )
+      );
+  }
+
+  public void driveRobotRelative(ChassisSpeeds speed) {
+    var wheelSpeeds = kinematics.toWheelSpeeds(speed);
+    left1.set(wheelSpeeds.leftMetersPerSecond / DriveConstants.maxVelocity.in(MetersPerSecond));
+    right1.set(wheelSpeeds.rightMetersPerSecond / DriveConstants.maxVelocity.in(MetersPerSecond));
+  }
+
 }
