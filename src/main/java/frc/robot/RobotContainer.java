@@ -13,6 +13,7 @@ import frc.robot.commands.TankDriveCommand;
 import frc.robot.subsystems.drive.Drivetrain;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.wrist.Wrist;
 
 public class RobotContainer {
@@ -42,6 +43,7 @@ public class RobotContainer {
 
   private final Drivetrain drive = new Drivetrain();
   private final Elevator elevator = new Elevator();
+  private final Intake intake = new Intake(0);
 
 
   public RobotContainer() {
