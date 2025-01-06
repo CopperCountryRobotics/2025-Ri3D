@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase{
@@ -47,6 +48,11 @@ public class Elevator extends SubsystemBase{
         heightMotor2.follow(heightMotor, true);
         encoder.setPositionConversionFactor(ElevatorConstants.positionConversionFactor);
     }
+    @Override
+    public void periodic(){
+        SmartDashboard.putNumber("Elevator Position", encoder.getPosition());
+        SmartDashboard.putBoolean("Elevator at limit", hasHitHardStop());
+    }
 
     public boolean hasHitHardStop() {
         return 
@@ -60,5 +66,9 @@ public class Elevator extends SubsystemBase{
      */
     public void setPosition(double height){
         heightPID.setReference(height, ControlType.kPosition);
+    }
+
+    public void setSpeed(double speed){
+        heightMotor.set(speed);
     }
 }

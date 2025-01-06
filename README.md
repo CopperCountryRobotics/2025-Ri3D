@@ -7,4 +7,5 @@
 - Elevator Lead = 6
 - Elevator Follow = 7
 - Wrist = 8
-- Intake = 9
+- Intake = 9 (PWM)
+- Arm = 10
