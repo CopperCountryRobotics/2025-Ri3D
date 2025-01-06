@@ -5,5 +5,5 @@ public class WristConstants {
     public static final double currentAutoStopThreshold = 15;
     public static final double autoStopVelocityThreshold = 10; //TODO measure
 
-    public static final double wristSpeed = 0.25;
+    public static final double wristSpeed = 0.15;
 }

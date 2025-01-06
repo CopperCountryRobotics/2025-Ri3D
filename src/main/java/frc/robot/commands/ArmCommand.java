@@ -11,9 +11,9 @@ import frc.robot.subsystems.arm.Arm;
 
 public class ArmCommand extends Command {
   private final Arm arm;
-  private Supplier<Double> armSpeed;
+  private double armSpeed;
 
-  public ArmCommand(Arm arm, Supplier<Double> armSpeed) {
+  public ArmCommand(Arm arm, double armSpeed) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.arm = arm;
     this.armSpeed = armSpeed;
@@ -27,7 +27,7 @@ public class ArmCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.armTwist(armSpeed.get());
+    arm.armTwist(armSpeed);
   }
 
   // Called once the command ends or is interrupted.

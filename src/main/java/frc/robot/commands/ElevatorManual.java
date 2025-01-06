@@ -17,7 +17,12 @@ public class ElevatorManual extends Command {
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
         elevator.setSpeed(speed.getAsDouble());
+    }
+
+    @Override
+    public boolean isFinished(){
+        return true;
     }
 }

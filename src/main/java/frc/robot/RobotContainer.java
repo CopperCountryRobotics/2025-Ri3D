@@ -7,12 +7,15 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ElevatorManual;
 import frc.robot.commands.ElevatorToPosition;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.MoveWrist;
 import frc.robot.commands.ResetEncoders;
 import frc.robot.commands.TankDriveCommand;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.drive.Drivetrain;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
@@ -48,6 +51,7 @@ public class RobotContainer {
   private final Elevator elevator = new Elevator();
   private final Intake intake = new Intake(9);
   private final Wrist wrist = new Wrist();
+  private final Arm arm = new Arm(ArmConstants.armCANIDs);
 
 
   public RobotContainer() {
@@ -60,11 +64,14 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    opController.povUp().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.topHeight));
-    opController.povDown().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.bottomHeight));
+    //opController.povUp().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.topHeight));
+    //opController.povDown().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.bottomHeight));
 
     opController.povLeft().whileTrue(new MoveWrist(wrist, true));
     opController.povRight().whileTrue(new MoveWrist(wrist, false));
+
+    opController.axisGreaterThan(0, .5).whileTrue(new ArmCommand(arm, .3));
+    opController.axisLessThan(0, -.5).whileTrue(new ArmCommand(arm, -.3));
 
     opController.button(7).onTrue(new IntakeCommand(intake, false));
     opController.button(8).onTrue(new IntakeCommand(intake, true));
