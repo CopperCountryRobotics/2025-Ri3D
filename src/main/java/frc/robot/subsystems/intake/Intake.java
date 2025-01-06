@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
@@ -11,7 +12,7 @@ public class Intake extends SubsystemBase {
       this.intake.setInverted(true);
     }
   
-    public void intake(double intakeSpeed, double indexSpeed) {
+    public void intake(double intakeSpeed) {
       this.intake.set(intakeSpeed);
     }
   

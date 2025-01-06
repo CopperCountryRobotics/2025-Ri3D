@@ -7,10 +7,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.ElevatorManual;
 import frc.robot.commands.ElevatorToPosition;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.MoveWrist;
+import frc.robot.commands.ResetEncoders;
 import frc.robot.commands.TankDriveCommand;
 import frc.robot.subsystems.drive.Drivetrain;
 import frc.robot.subsystems.elevator.Elevator;
@@ -41,30 +42,38 @@ public class RobotContainer {
    */
 
   private CommandJoystick driverController;
-  private CommandXboxController opController;
+  private CommandJoystick opController;
 
   private final Drivetrain drive = new Drivetrain();
   private final Elevator elevator = new Elevator();
-  private final Intake intake = new Intake(0);
+  private final Intake intake = new Intake(9);
+  private final Wrist wrist = new Wrist();
 
 
   public RobotContainer() {
 
     driverController = new CommandJoystick(0);
-    opController = new CommandXboxController(1);
+    opController = new CommandJoystick(1);
 
     drive.setDefaultCommand(new TankDriveCommand(drive, ()->driverController.getRawAxis(1), ()->driverController.getRawAxis(3)));
-    elevator.setDefaultCommand(new ElevatorManual(elevator, () -> opController.getLeftY()));
     configureBindings();
   }
 
   private void configureBindings() {
-    opController.povUp().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.topHeight, () -> opController.getLeftY()));
-    opController.povLeft().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.middleHeight, () -> opController.getLeftY()));
-    opController.povDown().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.bottomHeight, () -> opController.getLeftY()));
-    opController.rightTrigger().onTrue(new IntakeCommand(intake, false));
-    opController.leftTrigger().onTrue(new IntakeCommand(intake, true));
-    
+    opController.povUp().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.topHeight));
+    opController.povDown().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.bottomHeight));
+
+    opController.povLeft().whileTrue(new MoveWrist(wrist, true));
+    opController.povRight().whileTrue(new MoveWrist(wrist, false));
+
+    opController.button(7).onTrue(new IntakeCommand(intake, false));
+    opController.button(8).onTrue(new IntakeCommand(intake, true));
+
+    opController.button(1).onTrue(new ElevatorManual(elevator, ()->.3)).onFalse(new ElevatorManual(elevator, ()->0));
+    opController.button(2).onTrue(new ElevatorManual(elevator, ()->-.3)).onFalse(new ElevatorManual(elevator, ()->0));
+
+    opController.button(3).onTrue(new ResetEncoders(elevator, wrist));
+
   }
 
   public Command getAutonomousCommand() {

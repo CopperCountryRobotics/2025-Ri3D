@@ -6,5 +6,5 @@ package frc.robot.subsystems.intake;
 
 /** Add your docs here. */
 public class IntakeConstants {
-    public static final int intakeCANId = 9;
+    public static final int intakePWMId = 9;
 }

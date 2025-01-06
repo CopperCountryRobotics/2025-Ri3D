@@ -18,6 +18,7 @@ public class Elevator extends SubsystemBase{
     private SparkPIDController heightPID;
     private RelativeEncoder encoder;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+    private double setpoint;
 
 
     public Elevator(){
@@ -66,9 +67,18 @@ public class Elevator extends SubsystemBase{
      */
     public void setPosition(double height){
         heightPID.setReference(height, ControlType.kPosition);
+        setpoint = height;
+    }
+
+    public boolean atPosition(){
+        return Math.abs(setpoint - encoder.getPosition()) < 1;
     }
 
     public void setSpeed(double speed){
         heightMotor.set(speed);
+    }
+
+    public void resetEncoders(){
+        encoder.setPosition(0);
     }
 }
