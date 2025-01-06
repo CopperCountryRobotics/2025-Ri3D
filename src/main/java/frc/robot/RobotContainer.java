@@ -8,7 +8,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.ElevatorManual;
 import frc.robot.commands.ElevatorToPosition;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.TankDriveCommand;
 import frc.robot.subsystems.drive.Drivetrain;
 import frc.robot.subsystems.elevator.Elevator;
@@ -52,14 +54,16 @@ public class RobotContainer {
     opController = new CommandXboxController(1);
 
     drive.setDefaultCommand(new TankDriveCommand(drive, ()->driverController.getRawAxis(1), ()->driverController.getRawAxis(3)));
-
+    elevator.setDefaultCommand(new ElevatorManual(elevator, () -> opController.getLeftY()));
     configureBindings();
   }
 
   private void configureBindings() {
-    opController.povUp().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.topHeight));
-    opController.povLeft().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.middleHeight));
-    opController.povDown().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.bottomHeight));
+    opController.povUp().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.topHeight, () -> opController.getLeftY()));
+    opController.povLeft().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.middleHeight, () -> opController.getLeftY()));
+    opController.povDown().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.bottomHeight, () -> opController.getLeftY()));
+    opController.rightTrigger().onTrue(new IntakeCommand(intake, false));
+    opController.leftTrigger().onTrue(new IntakeCommand(intake, true));
     
   }
 
