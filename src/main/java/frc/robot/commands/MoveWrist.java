@@ -1,6 +1,8 @@
-package frc.robot.subsystems.wrist;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristConstants;
 
 public class MoveWrist extends Command {
     
