@@ -11,18 +11,22 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.reduxrobotics.sensors.canandgyro.Canandgyro;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.PhoenixUtil;
 import frc.robot.util.SparkUtil;
@@ -32,12 +36,11 @@ public class Drivetrain extends SubsystemBase {
   private final CANSparkMax left1, left2, right1, right2;
  private final RelativeEncoder leftEncoder, rightEncoder;
 
-  private final Pigeon2 gyro;
-
   private final DifferentialDrive drive;
 
   private final DifferentialDriveKinematics kinematics;
   private final DifferentialDriveOdometry odometry;
+  private final Canandgyro gyro;
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -73,15 +76,9 @@ public class Drivetrain extends SubsystemBase {
     right2.follow(right1);
 
 
-    gyro = new Pigeon2(DriveConstants.gyroCANID);
+    gyro = new Canandgyro(DriveConstants.gyroCANID);
 
-    var gyroConfig = new Pigeon2Configuration();
-    gyroConfig.MountPose.MountPoseYaw = DriveConstants.gyroMountPose.getZ();
-    gyroConfig.MountPose.MountPosePitch = DriveConstants.gyroMountPose.getY();
-    gyroConfig.MountPose.MountPoseRoll = DriveConstants.gyroMountPose.getX();
-
-    PhoenixUtil.tryUntilOk(5, () -> gyro.getConfigurator().apply(gyroConfig));
-
+    gyro.setPose(DriveConstants.gyroMountPose.getX(), DriveConstants.gyroMountPose.getY(), DriveConstants.gyroMountPose.getZ(), 0.05);
     kinematics = new DifferentialDriveKinematics(DriveConstants.trackWidth);
 
     odometry = new DifferentialDriveOdometry(
@@ -94,14 +91,20 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-   // odometry.update(
-     // gyro.getRotation2d(), 
-      //leftEncoder.getPosition(), 
-     // rightEncoder.getPosition());
+   odometry.update(
+     gyro.getRotation2d(), 
+      leftEncoder.getPosition(), 
+     rightEncoder.getPosition());
+     SmartDashboard.putNumber("Roll", getXYZ().getX());
+     SmartDashboard.putNumber("Pitch", getXYZ().getY());
+     SmartDashboard.putNumber("Yaw", getXYZ().getZ());
   }
 
   public void tankDrive(double left, double right) {
     drive.tankDrive(left, right, true);
+  }
+  public Rotation3d getXYZ(){
+    return gyro.getRotation3d();
   }
 
   public void arcadeDrive(double fwd, double turn) {
