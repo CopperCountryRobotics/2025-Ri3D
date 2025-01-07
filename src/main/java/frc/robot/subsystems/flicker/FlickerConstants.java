@@ -8,6 +8,6 @@ package frc.robot.subsystems.flicker;
 public class FlickerConstants {
 
     public static final int pivotCANid = 11;
-    public static final int wheelCANid = 12;
+    public static final int wheelPWMid = 8;
 
 }

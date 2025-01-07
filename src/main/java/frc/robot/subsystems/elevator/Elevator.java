@@ -84,7 +84,7 @@ public class Elevator extends SubsystemBase{
             heightPID.setOutputRange(min, max); 
             kMinOutput = min; kMaxOutput = max; 
         }
-        if((encoderValue != kPosition)){heightPID.setReference(encoderValue, ControlType.kPosition); kPosition = encoderValue;}
+        //if((encoderValue != kPosition)){heightPID.setReference(encoderValue, ControlType.kPosition); kPosition = encoderValue;}
     }
 
     public boolean hasHitHardStop() {

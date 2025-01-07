@@ -85,7 +85,7 @@ public class Arm extends SubsystemBase {
             pidControllerArm.setOutputRange(min, max); 
             kMinOutput = min; kMaxOutput = max; 
         }
-        if((encoderValue != kPosition)){pidControllerArm.setReference(encoderValue, ControlType.kPosition); kPosition = encoderValue;}
+       // if((encoderValue != kPosition)){pidControllerArm.setReference(encoderValue, ControlType.kPosition); kPosition = encoderValue;}
     }
 
     public double getArmVelocity() {
@@ -101,10 +101,15 @@ public class Arm extends SubsystemBase {
     }
 
     public void positionArm(double radians) {
+        kPosition = radians;
         pidControllerArm.setReference(radians, ControlType.kPosition, 0); // recalculate (placeholder numbers)
     }
 
     public void resetEncoders(){
         encoderArm.setPosition(0);
+    }
+
+    public boolean atSetpoint(){
+        return Math.abs(encoderArm.getPosition() - kPosition) < .2;
     }
 }

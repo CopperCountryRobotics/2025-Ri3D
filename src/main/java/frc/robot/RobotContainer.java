@@ -13,12 +13,16 @@ import frc.robot.commands.ElevatorToPosition;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.MoveWrist;
 import frc.robot.commands.ResetEncoders;
+import frc.robot.commands.RobotHome;
+import frc.robot.commands.ScoreLevelThree;
+import frc.robot.commands.ScoreLevelTwo;
 import frc.robot.commands.TankDriveCommand;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.drive.Drivetrain;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.subsystems.flicker.Flicker;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.wrist.Wrist;
 
@@ -49,6 +53,7 @@ public class RobotContainer {
 
   private final Drivetrain drive = new Drivetrain();
   private final Elevator elevator = new Elevator();
+  private final Flicker flicker = new Flicker();
   private final Intake intake = new Intake(9);
   private final Wrist wrist = new Wrist();
   private final Arm arm = new Arm(ArmConstants.armCANIDs);
@@ -64,8 +69,14 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    //opController.povUp().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.topHeight));
-    //opController.povDown().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.bottomHeight));
+
+    //Flicker Wheel
+    opController.axisGreaterThan(2, .5).onTrue(Commands.run(()->flicker.spinWheel(.5), flicker)).onFalse(Commands.run(()->flicker.spinWheel(0), flicker));
+    opController.axisLessThan(2, -.5).onTrue(Commands.run(()->flicker.spinWheel(-.5), flicker)).onFalse(Commands.run(()->flicker.spinWheel(0), flicker));
+
+    //Flicker Arm
+    opController.povUp().onTrue(Commands.run(()->flicker.moveArm(.5), flicker)).onFalse(Commands.run(()->flicker.moveArm(0), flicker));
+    opController.povDown().onTrue(Commands.run(()->flicker.moveArm(-.5), flicker)).onFalse(Commands.run(()->flicker.moveArm(0), flicker));
 
     //Wrist
     opController.povLeft().whileTrue(new MoveWrist(wrist, true));
@@ -84,7 +95,11 @@ public class RobotContainer {
     opController.button(2).onTrue(new ElevatorManual(elevator, -.1)).onFalse(new ElevatorManual(elevator,0));
 
     //Encoder
-    opController.button(3).onTrue(new ResetEncoders(elevator, wrist, arm));
+    opController.button(3).onTrue(new ResetEncoders(elevator, wrist, arm, flicker));
+
+    driverController.button(1).onTrue(new RobotHome(arm, elevator, wrist));
+    driverController.button(2).onTrue(new ScoreLevelThree(arm, elevator, wrist));
+    driverController.button(3).onTrue(new ScoreLevelTwo(arm, elevator, wrist));
   }
 
   public Command getAutonomousCommand() {

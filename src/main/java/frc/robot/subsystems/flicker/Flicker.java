@@ -25,7 +25,7 @@ public class Flicker extends SubsystemBase {
   public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, kPosition;
 
     public Flicker() {
-      wheel = new PWMTalonSRX(FlickerConstants.wheelCANid);
+      wheel = new PWMTalonSRX(FlickerConstants.wheelPWMid);
       arm = new CANSparkMax(FlickerConstants.pivotCANid, MotorType.kBrushless);
 
       this.arm.setSmartCurrentLimit(30); // recalculate (placeholder numbers)
@@ -56,12 +56,12 @@ public class Flicker extends SubsystemBase {
         //pidControllerArm.setIMaxAccum(0.0, 0);
         pidControllerArm.setFF(0.0);
         pidControllerArm.setOutputRange(-.3, .3);
-        SmartDashboard.putNumber("P Gain", kP);
-        SmartDashboard.putNumber("I Gain", kI);
-        SmartDashboard.putNumber("D Gain", kD);
-        SmartDashboard.putNumber("Max Output", kMaxOutput);
-        SmartDashboard.putNumber("Min Output", kMinOutput);
-        SmartDashboard.putNumber("Set Rotations", 0);
+        SmartDashboard.putNumber("Flicker P Gain", kP);
+        SmartDashboard.putNumber("Flicker I Gain", kI);
+        SmartDashboard.putNumber("Flicker D Gain", kD);
+        SmartDashboard.putNumber("Flicker Max Output", kMaxOutput);
+        SmartDashboard.putNumber("Flicker Min Output", kMinOutput);
+        SmartDashboard.putNumber("Flicker Set Rotations", 0);
     }
 
     @Override
@@ -96,5 +96,9 @@ public class Flicker extends SubsystemBase {
 
     public void positionArm(double pos) {
       pidControllerArm.setReference(pos, ControlType.kPosition, 0); // recalculate (placeholder numbers)
+  }
+
+  public void resetEncoders(){
+    encoderArm.setPosition(0);
   }
 }

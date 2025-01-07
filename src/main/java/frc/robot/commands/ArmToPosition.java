@@ -5,21 +5,23 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.arm.Arm;
 
-public class ElevatorHome extends Command {
-  Elevator elevator;
-  /** Creates a new ElevatorHome. */
-  public ElevatorHome(Elevator elevator) {
-    this.elevator = elevator;
-    addRequirements(elevator);
+public class ArmToPosition extends Command {
+  private Arm arm; 
+  double pos; 
+  /** Creates a new ArmToPosition. */
+  public ArmToPosition(Arm arm, double pos) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.arm = arm; 
+    this.pos = pos; 
+    addRequirements(arm);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    elevator.setSpeed(.15);
+    arm.positionArm(pos);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -28,13 +30,11 @@ public class ElevatorHome extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    elevator.setSpeed(0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return elevator.hasHitHardStop();
+    return arm.atSetpoint();
   }
 }

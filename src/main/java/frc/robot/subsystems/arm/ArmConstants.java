@@ -18,4 +18,7 @@ public class ArmConstants {
     public static final double kDArm = 0.0;
 
     public static final boolean kArmEncoderReversed = true;    
+
+    public static final double armLevelThree = 8.55;
+    public static final double armLevelTwo = 8.55;
 }

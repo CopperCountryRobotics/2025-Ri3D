@@ -26,7 +26,7 @@ public class ElevatorToPosition extends Command {
     @Override
     public boolean isFinished() {
         //if we hit a hard stop, cancel the command
-        return elevator.hasHitHardStop() || elevator.atPosition();
+        return elevator.atPosition();
     }
 
 }
