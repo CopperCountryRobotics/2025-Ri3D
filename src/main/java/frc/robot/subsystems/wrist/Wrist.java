@@ -41,6 +41,7 @@ public class Wrist extends SubsystemBase {
         
         wrist.setSmartCurrentLimit(20);
         wrist.setIdleMode(IdleMode.kBrake);
+        wrist.setOpenLoopRampRate(.35);
     }
 
 

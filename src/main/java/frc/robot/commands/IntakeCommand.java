@@ -36,9 +36,9 @@ public class IntakeCommand extends Command {
   public void execute() {
     if (!stop) {
       if (!direction) {
-        intake.intake(0.5);
+        intake.intake(1);
       } else {
-        intake.intake(-0.5);
+        intake.intake(-1);
       }
     } else {
       intake.stop();
@@ -54,6 +54,6 @@ public class IntakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }

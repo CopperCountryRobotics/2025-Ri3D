@@ -3,6 +3,7 @@ package frc.robot.subsystems.elevator;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkLimitSwitch.Type;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -14,10 +15,9 @@ public class Elevator extends SubsystemBase{
     private final CANSparkMax heightMotor;
     private final CANSparkMax heightMotor2;
 
-    //private final SparkClosedLoopController heightPID;
     private SparkPIDController heightPID;
     private RelativeEncoder encoder;
-    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, kPosition;
     private double setpoint;
 
 
@@ -28,12 +28,12 @@ public class Elevator extends SubsystemBase{
         encoder = heightMotor.getEncoder();
 
         kP = 0.1; 
-        kI = 1e-4;
-        kD = 1; 
+        kI = 0;
+        kD = 0; 
         kIz = 0; 
         kFF = 0; 
-        kMaxOutput = 1; 
-        kMinOutput = -1;
+        kMaxOutput = .3; 
+        kMinOutput = -.3;
 
         heightPID.setP(kP);
         heightPID.setI(kI);
@@ -45,14 +45,46 @@ public class Elevator extends SubsystemBase{
         heightMotor2.setSmartCurrentLimit(50);
         heightMotor.setIdleMode(IdleMode.kBrake);
         heightMotor2.setIdleMode(IdleMode.kBrake);
-        heightMotor.setInverted(false);
+        heightMotor.setInverted(true);
         heightMotor2.follow(heightMotor, true);
         encoder.setPositionConversionFactor(ElevatorConstants.positionConversionFactor);
+
+        heightMotor.getForwardLimitSwitch(Type.kNormallyOpen).enableLimitSwitch(true);
+        heightMotor.getReverseLimitSwitch(Type.kNormallyOpen).enableLimitSwitch(true);
+
+        heightMotor.burnFlash();
+        heightMotor2.burnFlash();
+        SmartDashboard.putNumber("Elevator P", kP);
+        SmartDashboard.putNumber("Elevator I", kI);
+        SmartDashboard.putNumber("Elevator D", kD);
+        SmartDashboard.putNumber("Elevator Max Output", kMaxOutput);
+        SmartDashboard.putNumber("Elevator Min Output", kMinOutput);
+        SmartDashboard.putNumber("Elevator Set Rotations", 0);
     }
     @Override
     public void periodic(){
         SmartDashboard.putNumber("Elevator Position", encoder.getPosition());
         SmartDashboard.putBoolean("Elevator at limit", hasHitHardStop());
+
+        SmartDashboard.putBoolean("Elevator top limit", heightMotor.getForwardLimitSwitch(Type.kNormallyOpen).isPressed());
+        SmartDashboard.putBoolean("Elevator bottom limit", heightMotor.getReverseLimitSwitch(Type.kNormallyOpen).isPressed());
+
+        double p = SmartDashboard.getNumber("Elevator P", 0);
+        double i = SmartDashboard.getNumber("Elevator I", 0);
+        double d = SmartDashboard.getNumber("Elevator D", 0);
+        double max = SmartDashboard.getNumber("Elevator Max Output", 0);
+        double min = SmartDashboard.getNumber("Elevator Min Output", 0);
+        double encoderValue = SmartDashboard.getNumber("Elevator Set Rotations", 0);
+
+        if((p != kP)) { heightPID.setP(p); kP = p; }
+        if((i != kI)) { heightPID.setI(i); kI = i; }
+        if((d != kD)) { heightPID.setD(d); kD = d; }
+
+        if((max != kMaxOutput) || (min != kMinOutput)) { 
+            heightPID.setOutputRange(min, max); 
+            kMinOutput = min; kMaxOutput = max; 
+        }
+        if((encoderValue != kPosition)){heightPID.setReference(encoderValue, ControlType.kPosition); kPosition = encoderValue;}
     }
 
     public boolean hasHitHardStop() {

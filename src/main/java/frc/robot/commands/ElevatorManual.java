@@ -8,9 +8,9 @@ import frc.robot.subsystems.elevator.Elevator;
 public class ElevatorManual extends Command {
     
     private final Elevator elevator;
-    private final DoubleSupplier speed;
+    private final double speed;
 
-    public ElevatorManual(Elevator elevator, DoubleSupplier speed) {
+    public ElevatorManual(Elevator elevator, double speed) {
         this.elevator = elevator;
         this.speed = speed;
         addRequirements(elevator);
@@ -18,7 +18,7 @@ public class ElevatorManual extends Command {
 
     @Override
     public void initialize() {
-        elevator.setSpeed(speed.getAsDouble());
+        elevator.setSpeed(speed);
     }
 
     @Override
