@@ -9,6 +9,8 @@ import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -21,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Arm extends SubsystemBase {
     private CANSparkMax arm;
     private SparkPIDController pidControllerArm;
-    private AbsoluteEncoder encoderArm;
+    private SparkAbsoluteEncoder encoderArm;
 
      public Arm(int armTwist) {
         this.arm = new CANSparkMax(armTwist, MotorType.kBrushless);
@@ -31,7 +33,7 @@ public class Arm extends SubsystemBase {
         this.arm.setIdleMode(IdleMode.kBrake);
 
 
-        encoderArm = arm.getAbsoluteEncoder();
+        encoderArm = arm.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
         encoderArm.setPositionConversionFactor(ArmConstants.kArmEncoderRot2Rad);
         encoderArm.setVelocityConversionFactor(ArmConstants.kArmEncoderRPM2RadPerSec);
         //encoderArm.setPosition(Math.toRadians(-90.0));
