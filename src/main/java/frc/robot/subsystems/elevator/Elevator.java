@@ -3,6 +3,7 @@ package frc.robot.subsystems.elevator;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkLimitSwitch.Type;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -14,7 +15,6 @@ public class Elevator extends SubsystemBase{
     private final CANSparkMax heightMotor;
     private final CANSparkMax heightMotor2;
 
-    //private final SparkClosedLoopController heightPID;
     private SparkPIDController heightPID;
     private RelativeEncoder encoder;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
@@ -28,12 +28,12 @@ public class Elevator extends SubsystemBase{
         encoder = heightMotor.getEncoder();
 
         kP = 0.1; 
-        kI = 1e-4;
-        kD = 1; 
+        kI = 0;
+        kD = 0; 
         kIz = 0; 
         kFF = 0; 
-        kMaxOutput = 1; 
-        kMinOutput = -1;
+        kMaxOutput = .3; 
+        kMinOutput = -.3;
 
         heightPID.setP(kP);
         heightPID.setI(kI);
@@ -48,6 +48,8 @@ public class Elevator extends SubsystemBase{
         heightMotor.setInverted(false);
         heightMotor2.follow(heightMotor, true);
         encoder.setPositionConversionFactor(ElevatorConstants.positionConversionFactor);
+
+        heightMotor.getForwardLimitSwitch(Type.kNormallyClosed).enableLimitSwitch(true);
     }
     @Override
     public void periodic(){

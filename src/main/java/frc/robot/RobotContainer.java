@@ -73,6 +73,7 @@ public class RobotContainer {
     opController.axisGreaterThan(0, .5).whileTrue(new ArmCommand(arm, .3));
     opController.axisLessThan(0, -.5).whileTrue(new ArmCommand(arm, -.3));
 
+    //Intake
     opController.button(7).onTrue(new IntakeCommand(intake, false));
     opController.button(8).onTrue(new IntakeCommand(intake, true));
 
@@ -80,10 +81,16 @@ public class RobotContainer {
     opController.button(2).onTrue(new ElevatorManual(elevator, ()->-.3)).onFalse(new ElevatorManual(elevator, ()->0));
 
     opController.button(3).onTrue(new ResetEncoders(elevator, wrist));
-
   }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
   }
 }
+
+//TODO: Hold wrist in 0 position
+//TODO: Get wrist encoder position for 90 degree turn
+//TODO: Get arm encoder position for top scoring position
+//TODO: Tune arm pid loop 
+//TODO: Get elevator position for middle score 
+//TODO: Tune elevator PID loop

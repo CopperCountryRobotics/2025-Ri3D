@@ -54,7 +54,7 @@ public class Arm extends SubsystemBase {
         pidControllerArm.setP(0.55); // recalculate (placeholder numbers)
         pidControllerArm.setI(0.0);
         pidControllerArm.setD(0.0);
-        pidControllerArm.setIZone(0);
+        //pidControllerArm.setIZone(0);
         //pidControllerArm.setIMaxAccum(0.0, 0);
         pidControllerArm.setFF(0.0);
         pidControllerArm.setOutputRange(-.5, .5);
@@ -79,11 +79,12 @@ public class Arm extends SubsystemBase {
         if((p != kP)) { pidControllerArm.setP(p); kP = p; }
         if((i != kI)) { pidControllerArm.setI(i); kI = i; }
         if((d != kD)) { pidControllerArm.setD(d); kD = d; }
+
         if((max != kMaxOutput) || (min != kMinOutput)) { 
-        pidControllerArm.setOutputRange(min, max); 
-        kMinOutput = min; kMaxOutput = max; 
-        SmartDashboard.putNumber("SetPoint", rotations);
-    }
+            pidControllerArm.setOutputRange(min, max); 
+            kMinOutput = min; kMaxOutput = max; 
+            SmartDashboard.putNumber("SetPoint", rotations);
+        }
     }
 
     public double getArmVelocity() {
@@ -99,7 +100,6 @@ public class Arm extends SubsystemBase {
     }
 
     public void positionArm(double radians) {
-        pidControllerArm.setReference(radians, ControlType.kPosition, 0, 0.028 * getArmPosition().getCos(),
-                ArbFFUnits.kPercentOut); // recalculate (placeholder numbers)
+        pidControllerArm.setReference(radians, ControlType.kPosition, 0); // recalculate (placeholder numbers)
     }
 }
