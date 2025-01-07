@@ -17,7 +17,7 @@ public class Elevator extends SubsystemBase{
 
     private SparkPIDController heightPID;
     private RelativeEncoder encoder;
-    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, kPosition;
     private double setpoint;
 
 
@@ -54,6 +54,12 @@ public class Elevator extends SubsystemBase{
 
         heightMotor.burnFlash();
         heightMotor2.burnFlash();
+        SmartDashboard.putNumber("Elevator P", kP);
+        SmartDashboard.putNumber("Elevator I", kI);
+        SmartDashboard.putNumber("Elevator D", kD);
+        SmartDashboard.putNumber("Elevator Max Output", kMaxOutput);
+        SmartDashboard.putNumber("Elevator Min Output", kMinOutput);
+        SmartDashboard.putNumber("Elevator Set Rotations", 0);
     }
     @Override
     public void periodic(){
@@ -62,6 +68,23 @@ public class Elevator extends SubsystemBase{
 
         SmartDashboard.putBoolean("Elevator top limit", heightMotor.getForwardLimitSwitch(Type.kNormallyOpen).isPressed());
         SmartDashboard.putBoolean("Elevator bottom limit", heightMotor.getReverseLimitSwitch(Type.kNormallyOpen).isPressed());
+
+        double p = SmartDashboard.getNumber("Elevator P", 0);
+        double i = SmartDashboard.getNumber("Elevator I", 0);
+        double d = SmartDashboard.getNumber("Elevator D", 0);
+        double max = SmartDashboard.getNumber("Elevator Max Output", 0);
+        double min = SmartDashboard.getNumber("Elevator Min Output", 0);
+        double encoderValue = SmartDashboard.getNumber("Elevator Set Rotations", 0);
+
+        if((p != kP)) { heightPID.setP(p); kP = p; }
+        if((i != kI)) { heightPID.setI(i); kI = i; }
+        if((d != kD)) { heightPID.setD(d); kD = d; }
+
+        if((max != kMaxOutput) || (min != kMinOutput)) { 
+            heightPID.setOutputRange(min, max); 
+            kMinOutput = min; kMaxOutput = max; 
+        }
+        if((encoderValue != kPosition)){heightPID.setReference(encoderValue, ControlType.kPosition); kPosition = encoderValue;}
     }
 
     public boolean hasHitHardStop() {
