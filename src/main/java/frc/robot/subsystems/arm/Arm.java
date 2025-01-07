@@ -24,7 +24,7 @@ public class Arm extends SubsystemBase {
     private CANSparkMax arm;
     private SparkPIDController pidControllerArm;
     private SparkAbsoluteEncoder encoderArm;
-    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, kPosition;
 
      public Arm(int armTwist) {
         this.arm = new CANSparkMax(armTwist, MotorType.kBrushless);
@@ -54,10 +54,10 @@ public class Arm extends SubsystemBase {
         pidControllerArm.setP(0.55); // recalculate (placeholder numbers)
         pidControllerArm.setI(0.0);
         pidControllerArm.setD(0.0);
-        //pidControllerArm.setIZone(0);
+        ////pidControllerArm.setIZone(0);
         //pidControllerArm.setIMaxAccum(0.0, 0);
         pidControllerArm.setFF(0.0);
-        pidControllerArm.setOutputRange(-.5, .5);
+        pidControllerArm.setOutputRange(-.3, .3);
         SmartDashboard.putNumber("P Gain", kP);
         SmartDashboard.putNumber("I Gain", kI);
         SmartDashboard.putNumber("D Gain", kD);
@@ -74,7 +74,7 @@ public class Arm extends SubsystemBase {
         double d = SmartDashboard.getNumber("D Gain", 0);
         double max = SmartDashboard.getNumber("Max Output", 0);
         double min = SmartDashboard.getNumber("Min Output", 0);
-        double rotations = SmartDashboard.getNumber("Set Rotations", 0);
+        double encoderValue = SmartDashboard.getNumber("Set Rotations", 0);
 
         if((p != kP)) { pidControllerArm.setP(p); kP = p; }
         if((i != kI)) { pidControllerArm.setI(i); kI = i; }
@@ -83,8 +83,8 @@ public class Arm extends SubsystemBase {
         if((max != kMaxOutput) || (min != kMinOutput)) { 
             pidControllerArm.setOutputRange(min, max); 
             kMinOutput = min; kMaxOutput = max; 
-            SmartDashboard.putNumber("SetPoint", rotations);
         }
+        if((encoderValue != kPosition)){pidControllerArm.setReference(encoderValue, ControlType.kPosition); kPosition = encoderValue;}
     }
 
     public double getArmVelocity() {
