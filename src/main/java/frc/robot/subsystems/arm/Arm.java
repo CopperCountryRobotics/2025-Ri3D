@@ -24,6 +24,7 @@ public class Arm extends SubsystemBase {
     private CANSparkMax arm;
     private SparkPIDController pidControllerArm;
     private SparkAbsoluteEncoder encoderArm;
+    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
 
      public Arm(int armTwist) {
         this.arm = new CANSparkMax(armTwist, MotorType.kBrushless);
@@ -39,6 +40,17 @@ public class Arm extends SubsystemBase {
         //encoderArm.setPosition(Math.toRadians(-90.0));
 
         pidControllerArm = arm.getPIDController();
+
+        kP = 0.55; 
+        kI = 0;
+        kD = 0; 
+        kIz = 0; 
+        kFF = 0; 
+        kMaxOutput = .5; 
+        kMinOutput = -.5;
+    
+
+
         pidControllerArm.setP(0.55); // recalculate (placeholder numbers)
         pidControllerArm.setI(0.0);
         pidControllerArm.setD(0.0);
@@ -46,11 +58,32 @@ public class Arm extends SubsystemBase {
         //pidControllerArm.setIMaxAccum(0.0, 0);
         pidControllerArm.setFF(0.0);
         pidControllerArm.setOutputRange(-.5, .5);
+        SmartDashboard.putNumber("P Gain", kP);
+        SmartDashboard.putNumber("I Gain", kI);
+        SmartDashboard.putNumber("D Gain", kD);
+        SmartDashboard.putNumber("Max Output", kMaxOutput);
+        SmartDashboard.putNumber("Min Output", kMinOutput);
+        SmartDashboard.putNumber("Set Rotations", 0);
     }
 
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Arm Encoder", encoderArm.getPosition());
+        double p = SmartDashboard.getNumber("P Gain", 0);
+        double i = SmartDashboard.getNumber("I Gain", 0);
+        double d = SmartDashboard.getNumber("D Gain", 0);
+        double max = SmartDashboard.getNumber("Max Output", 0);
+        double min = SmartDashboard.getNumber("Min Output", 0);
+        double rotations = SmartDashboard.getNumber("Set Rotations", 0);
+
+        if((p != kP)) { pidControllerArm.setP(p); kP = p; }
+        if((i != kI)) { pidControllerArm.setI(i); kI = i; }
+        if((d != kD)) { pidControllerArm.setD(d); kD = d; }
+        if((max != kMaxOutput) || (min != kMinOutput)) { 
+        pidControllerArm.setOutputRange(min, max); 
+        kMinOutput = min; kMaxOutput = max; 
+        SmartDashboard.putNumber("SetPoint", rotations);
+    }
     }
 
     public double getArmVelocity() {
