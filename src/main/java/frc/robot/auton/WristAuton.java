@@ -2,20 +2,22 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.auton;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.wrist.Wrist;
 
-public class ArmCommand extends Command {
-  private final Arm arm;
-  private double armSpeed;
+public class WristAuton extends Command {
+  public final PIDController thetaController = new PIDController(0.1, 0.0, 0.0);
+  private final Wrist wristAuton;
+  private double wristSpeedAuton;
 
-  public ArmCommand(Arm arm, double armSpeed) {
+  public WristAuton(Wrist wristAuton, double wristSpeedAuton) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.arm = arm;
-    this.armSpeed = armSpeed;
-    addRequirements(arm);
+    this.wristAuton = wristAuton;
+    this.wristSpeedAuton = wristSpeedAuton;
+    addRequirements(wristAuton);
   }
 
   // Called when the command is initially scheduled.
@@ -25,13 +27,13 @@ public class ArmCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.armTwist(armSpeed);
+    wristAuton.rotate(wristSpeedAuton);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    arm.armTwist(0);
+    wristAuton.rotate(0);
   }
 
   // Returns true when the command should end.
