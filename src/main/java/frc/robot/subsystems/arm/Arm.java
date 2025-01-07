@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Arm extends SubsystemBase {
     private CANSparkMax arm;
     private SparkPIDController pidControllerArm;
-    private SparkAbsoluteEncoder encoderArm;
+    private RelativeEncoder encoderArm;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, kPosition;
 
      public Arm(int armTwist) {
@@ -32,9 +32,10 @@ public class Arm extends SubsystemBase {
         this.arm.setSmartCurrentLimit(30); // recalculate (placeholder numbers)
         this.arm.setInverted(false);
         this.arm.setIdleMode(IdleMode.kBrake);
+        this.arm.setOpenLoopRampRate(.35);
 
 
-        encoderArm = arm.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+        encoderArm = arm.getEncoder();
         encoderArm.setPositionConversionFactor(ArmConstants.kArmEncoderRot2Rad);
         encoderArm.setVelocityConversionFactor(ArmConstants.kArmEncoderRPM2RadPerSec);
         //encoderArm.setPosition(Math.toRadians(-90.0));
@@ -101,5 +102,9 @@ public class Arm extends SubsystemBase {
 
     public void positionArm(double radians) {
         pidControllerArm.setReference(radians, ControlType.kPosition, 0); // recalculate (placeholder numbers)
+    }
+
+    public void resetEncoders(){
+        encoderArm.setPosition(0);
     }
 }

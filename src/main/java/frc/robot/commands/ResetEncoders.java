@@ -5,18 +5,21 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.wrist.Wrist;
 
 public class ResetEncoders extends Command {
   Elevator elevator;
   Wrist wrist;
+  Arm arm;
   /** Creates a new ResetEncoders. */
-  public ResetEncoders(Elevator elevator, Wrist wrist) {
+  public ResetEncoders(Elevator elevator, Wrist wrist, Arm arm) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.elevator = elevator;
     this.wrist = wrist;
-    addRequirements(elevator, wrist);
+    this.arm = arm;
+    addRequirements(elevator, wrist, arm);
   }
 
   // Called when the command is initially scheduled.
@@ -24,6 +27,7 @@ public class ResetEncoders extends Command {
   public void initialize() {
     elevator.resetEncoders();
     wrist.resetEncoders();
+    arm.resetEncoders();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

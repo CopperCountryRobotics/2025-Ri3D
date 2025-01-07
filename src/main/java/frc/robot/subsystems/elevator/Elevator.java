@@ -45,16 +45,23 @@ public class Elevator extends SubsystemBase{
         heightMotor2.setSmartCurrentLimit(50);
         heightMotor.setIdleMode(IdleMode.kBrake);
         heightMotor2.setIdleMode(IdleMode.kBrake);
-        heightMotor.setInverted(false);
+        heightMotor.setInverted(true);
         heightMotor2.follow(heightMotor, true);
         encoder.setPositionConversionFactor(ElevatorConstants.positionConversionFactor);
 
-        heightMotor.getForwardLimitSwitch(Type.kNormallyClosed).enableLimitSwitch(true);
+        heightMotor.getForwardLimitSwitch(Type.kNormallyOpen).enableLimitSwitch(true);
+        heightMotor.getReverseLimitSwitch(Type.kNormallyOpen).enableLimitSwitch(true);
+
+        heightMotor.burnFlash();
+        heightMotor2.burnFlash();
     }
     @Override
     public void periodic(){
         SmartDashboard.putNumber("Elevator Position", encoder.getPosition());
         SmartDashboard.putBoolean("Elevator at limit", hasHitHardStop());
+
+        SmartDashboard.putBoolean("Elevator top limit", heightMotor.getForwardLimitSwitch(Type.kNormallyOpen).isPressed());
+        SmartDashboard.putBoolean("Elevator bottom limit", heightMotor.getReverseLimitSwitch(Type.kNormallyOpen).isPressed());
     }
 
     public boolean hasHitHardStop() {

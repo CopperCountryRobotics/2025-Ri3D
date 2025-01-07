@@ -67,20 +67,24 @@ public class RobotContainer {
     //opController.povUp().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.topHeight));
     //opController.povDown().onTrue(new ElevatorToPosition(elevator, ElevatorConstants.bottomHeight));
 
+    //Wrist
     opController.povLeft().whileTrue(new MoveWrist(wrist, true));
     opController.povRight().whileTrue(new MoveWrist(wrist, false));
 
+    //Arm
     opController.axisGreaterThan(0, .5).whileTrue(new ArmCommand(arm, .3));
     opController.axisLessThan(0, -.5).whileTrue(new ArmCommand(arm, -.3));
 
     //Intake
-    opController.button(7).onTrue(new IntakeCommand(intake, false));
-    opController.button(8).onTrue(new IntakeCommand(intake, true));
+    opController.button(7).whileTrue(new IntakeCommand(intake, false));
+    opController.button(8).whileTrue(new IntakeCommand(intake, true));
 
-    opController.button(1).onTrue(new ElevatorManual(elevator, ()->.3)).onFalse(new ElevatorManual(elevator, ()->0));
-    opController.button(2).onTrue(new ElevatorManual(elevator, ()->-.3)).onFalse(new ElevatorManual(elevator, ()->0));
+    //Elevator
+    opController.button(1).onTrue(new ElevatorManual(elevator, .1)).onFalse(new ElevatorManual(elevator,0));
+    opController.button(2).onTrue(new ElevatorManual(elevator, -.1)).onFalse(new ElevatorManual(elevator,0));
 
-    opController.button(3).onTrue(new ResetEncoders(elevator, wrist));
+    //Encoder
+    opController.button(3).onTrue(new ResetEncoders(elevator, wrist, arm));
   }
 
   public Command getAutonomousCommand() {

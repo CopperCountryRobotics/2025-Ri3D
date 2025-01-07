@@ -22,7 +22,6 @@ public class MoveWrist extends Command {
     @Override
     public void end(boolean interrupted){ 
         wrist.rotate(0);
-        wrist.setPosition(wrist.getPosition());
     }
 
     @Override
