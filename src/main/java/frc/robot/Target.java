@@ -8,9 +8,9 @@ package frc.robot;
 public class Target {
     public static final Target ZERO = new Target(0.0, 0.0, 0.0, 0.0);
 
-    public static final Target positionOne = new Target(0.0, 0.0, 0.0, 0.0);
-    public static final Target positionTwo = new Target(0.0, 0.0, 0.0, 0.0);
-    public static final Target positionThree = new Target(0.0, 0.0, 8.0, 0.0);
+    public static final Target topPosition = new Target(0.0, 0.0, 0.0, 0.0);
+    public static final Target middlePosition = new Target(0.0, 0.0, 0.0, 0.0);
+    public static final Target bottomPosition = new Target(0.0, 0.0, 8.0, 0.0);
 
     public final double arm;
     public final double elevator;
