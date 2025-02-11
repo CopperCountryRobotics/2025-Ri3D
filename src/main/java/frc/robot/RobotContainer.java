@@ -16,13 +16,19 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.auton.ArmAuton;
 import frc.robot.auton.WristAuton;
+import frc.robot.commands.AlgeLevelThree;
+import frc.robot.commands.AlgeLevelTwo;
+import frc.robot.commands.ArcadeDriveCommand;
 import frc.robot.commands.ArmCommand;
 import frc.robot.commands.ElevatorManual;
 import frc.robot.commands.ElevatorToPosition;
+import frc.robot.commands.FlickerRemoveAlge;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.IntakePulse;
 import frc.robot.commands.MoveWrist;
 import frc.robot.commands.ResetEncoders;
 import frc.robot.commands.RobotHome;
+import frc.robot.commands.ScoreLevelOne;
 import frc.robot.commands.ScoreLevelThree;
 import frc.robot.commands.ScoreLevelTwo;
 import frc.robot.commands.TankDriveCommand;
@@ -76,11 +82,12 @@ public class RobotContainer {
     driverController = new CommandJoystick(0);
     opController = new CommandJoystick(1);
 
-    drive.setDefaultCommand(new TankDriveCommand(drive, ()->driverController.getRawAxis(1), ()->driverController.getRawAxis(3)));
+    drive.setDefaultCommand(new ArcadeDriveCommand(drive, ()->driverController.getRawAxis(1), ()->driverController.getRawAxis(4), ()->driverController.button(6).getAsBoolean()));
+    intake.setDefaultCommand(new IntakePulse(intake));
     configureBindings();
 
     // doSomething in auton (PURELY for examples, needs to be changed)
-    chooser.addOption("Do Something", doSomething());
+    chooser.setDefaultOption("Do Something", doSomething());
 
     SmartDashboard.putData(chooser);
   }
@@ -93,46 +100,45 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    //Flicker Wheel
-    opController.axisGreaterThan(2, .5).onTrue(Commands.run(()->flicker.spinWheel(.5), flicker)).onFalse(Commands.run(()->flicker.spinWheel(0), flicker));
-    opController.axisLessThan(2, -.5).onTrue(Commands.run(()->flicker.spinWheel(-.5), flicker)).onFalse(Commands.run(()->flicker.spinWheel(0), flicker));
+    // //Flicker Arm
+    // opController.povUp().onTrue(Commands.run(()->flicker.moveArm(.5), flicker)).onFalse(Commands.run(()->flicker.moveArm(0), flicker));
+    // opController.povDown().onTrue(Commands.run(()->flicker.moveArm(-.5), flicker)).onFalse(Commands.run(()->flicker.moveArm(0), flicker));
 
-    //Flicker Arm
-    opController.povUp().onTrue(Commands.run(()->flicker.moveArm(.5), flicker)).onFalse(Commands.run(()->flicker.moveArm(0), flicker));
-    opController.povDown().onTrue(Commands.run(()->flicker.moveArm(-.5), flicker)).onFalse(Commands.run(()->flicker.moveArm(0), flicker));
+    // //Wrist
+    opController.axisGreaterThan(2, .5).whileTrue(new MoveWrist(wrist, true));
+    opController.axisLessThan(2, -.5).whileTrue(new MoveWrist(wrist, false));
 
-    //Wrist
-    opController.povLeft().whileTrue(new MoveWrist(wrist, true));
-    opController.povRight().whileTrue(new MoveWrist(wrist, false));
+    // //Arm
+    opController.axisGreaterThan(3, .5).whileTrue(new ArmCommand(arm, .3));
+    opController.axisLessThan(3, -.5).whileTrue(new ArmCommand(arm, -.3));
 
-    //Arm
-    opController.axisGreaterThan(0, .5).whileTrue(new ArmCommand(arm, .3));
-    opController.axisLessThan(0, -.5).whileTrue(new ArmCommand(arm, -.3));
-
-    //Intake
-    opController.button(7).whileTrue(new IntakeCommand(intake, false));
-    opController.button(8).whileTrue(new IntakeCommand(intake, true));
-
-    //Elevator
-    opController.button(1).onTrue(new ElevatorManual(elevator, .1)).onFalse(new ElevatorManual(elevator,0));
-    opController.button(2).onTrue(new ElevatorManual(elevator, -.1)).onFalse(new ElevatorManual(elevator,0));
+    // //Elevator
+    opController.axisLessThan(1 , -.5).onTrue(new ElevatorManual(elevator, .1)).onFalse(new ElevatorManual(elevator,0));
+    opController.axisGreaterThan(1 , .5).onTrue(new ElevatorManual(elevator, -.1)).onFalse(new ElevatorManual(elevator,0));
 
     //Encoder
-    opController.button(3).onTrue(new ResetEncoders(elevator, wrist, arm, flicker));
+    opController.button(9).onTrue(new ResetEncoders(elevator, wrist, arm, flicker)); //Change to start button
 
-    driverController.button(1).onTrue(new RobotHome(arm, elevator, wrist));
-    driverController.button(2).onTrue(new ScoreLevelThree(arm, elevator, wrist));
-    driverController.button(3).onTrue(new ScoreLevelTwo(arm, elevator, wrist));
+    //Scoring Positions
+    opController.button(2).onTrue(new RobotHome(arm, elevator, wrist, flicker));
+    opController.button(4).onTrue(new ScoreLevelThree(arm, elevator, wrist));
+    opController.button(3).onTrue(new ScoreLevelTwo(arm, elevator, wrist));
+    opController.button(1).onTrue(new ScoreLevelOne(arm, elevator, wrist));
+
+    // //Intake
+    driverController.axisGreaterThan(2, .6).whileTrue(new IntakeCommand(intake, .35));
+    driverController.button(5).onTrue(Commands.either(new IntakeCommand(intake, -.35).withTimeout(.1), new IntakeCommand(intake, -1).withTimeout(.1), ()->Math.abs(wrist.getPosition()) > 1));
+
+    //Alge positions
+    opController.pov(180).onTrue(new AlgeLevelThree(arm, elevator, wrist, flicker));
+    opController.pov(0).onTrue(new AlgeLevelTwo(arm, elevator, wrist, flicker));
+
+    // //Flicker Wheel
+    driverController.axisGreaterThan(3, .6).whileTrue(new FlickerRemoveAlge(flicker));
+
   }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
   }
 }
-
-//TODO: Hold wrist in 0 position
-//TODO: Get wrist encoder position for 90 degree turn
-//TODO: Get arm encoder position for top scoring position
-//TODO: Tune arm pid loop 
-//TODO: Get elevator position for middle score 
-//TODO: Tune elevator PID loop

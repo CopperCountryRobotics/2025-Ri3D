@@ -9,20 +9,23 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.subsystems.flicker.Flicker;
+import frc.robot.subsystems.flicker.FlickerConstants;
 import frc.robot.subsystems.wrist.Wrist;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ScoreLevelTwo extends SequentialCommandGroup {
-  /** Creates a new ScoreLevelThree. */
-  public ScoreLevelTwo(Arm arm, Elevator elevator, Wrist wrist) {
+public class AlgeLevelTwo extends SequentialCommandGroup {
+  /** Creates a new AlgeLevelThree. */
+  public AlgeLevelTwo(Arm arm, Elevator elevator, Wrist wrist, Flicker flicker) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ArmToPosition(arm, ArmConstants.armVertical),
-      new ArmToPosition(arm, ArmConstants.armLevelTwo).alongWith(new ElevatorToPosition(elevator, ElevatorConstants.middleHeightCoral)), 
-      new WristToPosition(wrist, 0)
+      new WristToPosition(wrist, 0),
+      new ArmToPosition(arm, ArmConstants.armVertical),// about straight up in the air
+      new ElevatorToPosition(elevator, ElevatorConstants.bottomHeightAlge) 
+      //new FlickerArmToPosition(flicker, FlickerConstants.pivotExtended)
     );
   }
 }

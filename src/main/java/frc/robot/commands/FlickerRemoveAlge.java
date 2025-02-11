@@ -5,34 +5,38 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.flicker.Flicker;
+import frc.robot.subsystems.flicker.FlickerConstants;
 
-public class IntakeCommand extends Command {
-  private Intake intake;
-  double speed;
-
-  public IntakeCommand(Intake intake, double speed) {
-    this.intake = intake;
-    this.speed = speed;
-    addRequirements(intake);
+public class FlickerRemoveAlge extends Command {
+  Flicker flicker;
+  /** Creates a new FlickerRemoveAlge. */
+  public FlickerRemoveAlge(Flicker flicker) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(flicker);
+    this.flicker = flicker;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.intake(speed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if(flicker.getArmPosition() < -2){
+      flicker.spinWheel(-1);
+    }
+    flicker.moveArm(-.1);
     
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.stop();
+    flicker.spinWheel(0);
+    flicker.positionArm(FlickerConstants.pivotRetracted);
   }
 
   // Returns true when the command should end.

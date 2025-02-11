@@ -5,39 +5,36 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.flicker.Flicker;
 
-public class IntakeCommand extends Command {
-  private Intake intake;
-  double speed;
-
-  public IntakeCommand(Intake intake, double speed) {
-    this.intake = intake;
-    this.speed = speed;
-    addRequirements(intake);
+public class FlickerArmToPosition extends Command {
+  Flicker flicker; 
+  double pos;
+  /** Creates a new FlickerToPosition. */
+  public FlickerArmToPosition(Flicker flicker, double pos) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(flicker);
+    this.flicker = flicker;
+    this.pos = pos;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.intake(speed);
+    flicker.positionArm(pos);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    intake.stop();
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return flicker.atPosition();
   }
 }

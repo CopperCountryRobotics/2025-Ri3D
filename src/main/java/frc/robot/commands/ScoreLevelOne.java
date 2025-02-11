@@ -10,19 +10,20 @@ import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristConstants;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ScoreLevelTwo extends SequentialCommandGroup {
+public class ScoreLevelOne extends SequentialCommandGroup {
   /** Creates a new ScoreLevelThree. */
-  public ScoreLevelTwo(Arm arm, Elevator elevator, Wrist wrist) {
+  public ScoreLevelOne(Arm arm, Elevator elevator, Wrist wrist) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ArmToPosition(arm, ArmConstants.armVertical),
-      new ArmToPosition(arm, ArmConstants.armLevelTwo).alongWith(new ElevatorToPosition(elevator, ElevatorConstants.middleHeightCoral)), 
-      new WristToPosition(wrist, 0)
+      new ArmToPosition(arm, ArmConstants.armLevelOne).alongWith(new ElevatorToPosition(elevator, ElevatorConstants.bottomHeightCoral)), 
+      new WristToPosition(wrist, WristConstants.wristLevelOne)
     );
   }
 }

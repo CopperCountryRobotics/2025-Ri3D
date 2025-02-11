@@ -44,18 +44,18 @@ public class Flicker extends SubsystemBase {
         kD = 0; 
         kIz = 0; 
         kFF = 0; 
-        kMaxOutput = .5; 
-        kMinOutput = -.5;
+        kMaxOutput = .15; 
+        kMinOutput = -.15;
     
 
 
-        pidControllerArm.setP(0.55); // recalculate (placeholder numbers)
+        pidControllerArm.setP(kP); // recalculate (placeholder numbers)
         pidControllerArm.setI(0.0);
         pidControllerArm.setD(0.0);
         ////pidControllerArm.setIZone(0);
         //pidControllerArm.setIMaxAccum(0.0, 0);
         pidControllerArm.setFF(0.0);
-        pidControllerArm.setOutputRange(-.3, .3);
+        pidControllerArm.setOutputRange(kMinOutput, kMaxOutput);
         SmartDashboard.putNumber("Flicker P Gain", kP);
         SmartDashboard.putNumber("Flicker I Gain", kI);
         SmartDashboard.putNumber("Flicker D Gain", kD);
@@ -100,5 +100,13 @@ public class Flicker extends SubsystemBase {
 
   public void resetEncoders(){
     encoderArm.setPosition(0);
+  }
+
+  public boolean atPosition(){
+    return Math.abs(kPosition - encoderArm.getPosition()) < .1;
+}
+
+  public double getArmPosition(){
+    return encoderArm.getPosition();
   }
 }

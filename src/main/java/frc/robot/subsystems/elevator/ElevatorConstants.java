@@ -8,7 +8,10 @@ public class ElevatorConstants {
     public static final double autoStopCurrentThreshold = 15;
     public static final double autoStopVelocityThreshold = 0.1; //TODO measure
 
-    public static final double topHeight = 0;
-    public static final double middleHeight = -45.7;
-    public static final double bottomHeight = 0;
+    public static final double topHeightCoral = 0;
+    public static final double middleHeightCoral = -45.7;
+    public static final double bottomHeightCoral = -70;
+
+    public static final double topHeightAlge = 0;
+    public static final double bottomHeightAlge = -65;
 }

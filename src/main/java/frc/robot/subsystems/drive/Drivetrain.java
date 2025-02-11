@@ -13,9 +13,11 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -31,6 +33,7 @@ public class Drivetrain extends SubsystemBase {
 
   private final CANSparkMax left1, left2, right1, right2;
  private final RelativeEncoder leftEncoder, rightEncoder;
+ private  SparkPIDController leftPID, rightPID;
 
   private final Pigeon2 gyro;
 
@@ -38,6 +41,8 @@ public class Drivetrain extends SubsystemBase {
 
   private final DifferentialDriveKinematics kinematics;
   private final DifferentialDriveOdometry odometry;
+
+  SlewRateLimiter s1, s2;
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -50,6 +55,9 @@ public class Drivetrain extends SubsystemBase {
 
     leftEncoder = left1.getEncoder();
     rightEncoder = right1.getEncoder();
+
+    leftPID = left1.getPIDController();
+    rightPID = right1.getPIDController();
 
     
     left1.setSmartCurrentLimit(((int) DriveConstants.currentLimit));
@@ -90,6 +98,9 @@ public class Drivetrain extends SubsystemBase {
         0.0);
 
     drive = new DifferentialDrive(left1, right1);
+
+    s1 = new SlewRateLimiter(5);
+    s2 = new SlewRateLimiter(5);
   }
 
   @Override
@@ -104,12 +115,25 @@ public class Drivetrain extends SubsystemBase {
     drive.tankDrive(left, right, true);
   }
 
-  public void arcadeDrive(double fwd, double turn) {
-    drive.arcadeDrive(fwd, turn, true);
+  public void arcadeDrive(double fwd, double turn, boolean slow) {
+    if(slow){
+      drive.arcadeDrive(s1.calculate(fwd*.3), s2.calculate(turn*.3), true);
+    }else{
+      drive.arcadeDrive(s1.calculate(fwd*.5), s2.calculate(turn*.5), true);
+    }
   }
 
   public Pose2d getCurrentPose() {
     return odometry.getPoseMeters();
+  }
+
+  /**
+   * Sets the robot to drive straight for a set distance. Use negative distance for reverse
+   * @param speed
+   * @param distance
+   */
+  public void driveStraightDistance(double speed, double distance){
+
   }
 
   public void resetPose(Pose2d reset) {

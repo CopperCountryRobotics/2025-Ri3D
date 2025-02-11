@@ -4,25 +4,24 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.arm.ArmConstants;
-import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorConstants;
-import frc.robot.subsystems.wrist.Wrist;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.subsystems.intake.Intake;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ScoreLevelTwo extends SequentialCommandGroup {
-  /** Creates a new ScoreLevelThree. */
-  public ScoreLevelTwo(Arm arm, Elevator elevator, Wrist wrist) {
+public class IntakePulse extends SequentialCommandGroup {
+  /** Creates a new IntakePulse. */
+  public IntakePulse(Intake intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ArmToPosition(arm, ArmConstants.armVertical),
-      new ArmToPosition(arm, ArmConstants.armLevelTwo).alongWith(new ElevatorToPosition(elevator, ElevatorConstants.middleHeightCoral)), 
-      new WristToPosition(wrist, 0)
+      Commands.runOnce(()->intake.intake(.2), intake), 
+      new WaitCommand(.25),
+      Commands.runOnce(()->intake.intake(0), intake), 
+      new WaitCommand(.75)
     );
   }
 }

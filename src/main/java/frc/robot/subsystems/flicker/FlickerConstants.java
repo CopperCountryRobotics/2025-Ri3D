@@ -10,4 +10,7 @@ public class FlickerConstants {
     public static final int pivotCANid = 11;
     public static final int wheelPWMid = 8;
 
+    public static final double pivotExtended = -4.85;
+    public static final double pivotRetracted = 0;
+
 }

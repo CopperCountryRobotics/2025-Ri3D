@@ -47,8 +47,8 @@ public class Arm extends SubsystemBase {
         kD = 0; 
         kIz = 0; 
         kFF = 0; 
-        kMaxOutput = .5; 
-        kMinOutput = -.5;
+        kMaxOutput = .4; 
+        kMinOutput = -.4;
     
 
 
@@ -58,7 +58,7 @@ public class Arm extends SubsystemBase {
         ////pidControllerArm.setIZone(0);
         //pidControllerArm.setIMaxAccum(0.0, 0);
         pidControllerArm.setFF(0.0);
-        pidControllerArm.setOutputRange(-.3, .3);
+        pidControllerArm.setOutputRange(kMinOutput, kMaxOutput);
         SmartDashboard.putNumber("P Gain", kP);
         SmartDashboard.putNumber("I Gain", kI);
         SmartDashboard.putNumber("D Gain", kD);
@@ -85,7 +85,7 @@ public class Arm extends SubsystemBase {
             pidControllerArm.setOutputRange(min, max); 
             kMinOutput = min; kMaxOutput = max; 
         }
-       // if((encoderValue != kPosition)){pidControllerArm.setReference(encoderValue, ControlType.kPosition); kPosition = encoderValue;}
+        //if((encoderValue != kPosition)){pidControllerArm.setReference(encoderValue, ControlType.kPosition); kPosition = encoderValue;}
     }
 
     public double getArmVelocity() {

@@ -24,7 +24,7 @@ public class Wrist extends SubsystemBase {
         encoder = wrist.getEncoder();
         wristPID = wrist.getPIDController();
 
-        kP = 0.2; 
+        kP = 0.4; 
         kI = 0;
         kD = 0; 
         kIz = 0; 
@@ -45,6 +45,13 @@ public class Wrist extends SubsystemBase {
 
         resetEncoders();
         wristPID.setReference(0, ControlType.kPosition);
+
+        SmartDashboard.putNumber("Wrist P Gain", kP);
+        SmartDashboard.putNumber("Wrist I Gain", kI);
+        SmartDashboard.putNumber("Wrist D Gain", kD);
+        SmartDashboard.putNumber("Wrist Max Output", kMaxOutput);
+        SmartDashboard.putNumber("Wrist Min Output", kMinOutput);
+        SmartDashboard.putNumber("Wrist Set- Rotations", 0);
     }
 
 
@@ -62,7 +69,7 @@ public class Wrist extends SubsystemBase {
     }
 
     public boolean atPosition(){
-        return Math.abs(setpoint - encoder.getPosition()) < 1;
+        return Math.abs(setpoint - encoder.getPosition()) < .1;
     }
 
     public double getPosition(){
@@ -71,7 +78,23 @@ public class Wrist extends SubsystemBase {
 
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("Wrist Pos", encoder.getPosition());
+        SmartDashboard.putNumber("Wrist Encoder", encoder.getPosition());
+        double p = SmartDashboard.getNumber("Wrist P Gain", 0);
+        double i = SmartDashboard.getNumber("Wrist I Gain", 0);
+        double d = SmartDashboard.getNumber("Wrist D Gain", 0);
+        double max = SmartDashboard.getNumber("Wrist Max Output", 0);
+        double min = SmartDashboard.getNumber("Wrist Min Output", 0);
+        double encoderValue = SmartDashboard.getNumber("Wrist Set- Rotations", 0);
+
+        if((p != kP)) { wristPID.setP(p); kP = p; }
+        if((i != kI)) { wristPID.setI(i); kI = i; }
+        if((d != kD)) { wristPID.setD(d); kD = d; }
+
+        if((max != kMaxOutput) || (min != kMinOutput)) { 
+            wristPID.setOutputRange(min, max); 
+            kMinOutput = min; kMaxOutput = max; 
+        }
+        //if((encoderValue != setpoint)){wristPID.setReference(encoderValue, ControlType.kPosition); setpoint = encoderValue;}
     }
 
     public void resetEncoders(){
