@@ -122,7 +122,7 @@ public class Drivetrain extends SubsystemBase {
     if(slow){
       drive.arcadeDrive(s1.calculate(fwd*.3), s2.calculate(turn*.3), true);
     }else{
-      drive.arcadeDrive(s1.calculate(fwd*.5), s2.calculate(turn*.5), true);
+      drive.arcadeDrive(s1.calculate(fwd), s2.calculate(turn), true);
     }
   }
 
@@ -130,14 +130,11 @@ public class Drivetrain extends SubsystemBase {
     return odometry.getPoseMeters();
   }
 
-  /**
-   * Sets the robot to drive straight for a set distance. Use negative distance for reverse
-   * @param speed
-   * @param distance
-   */
-  public void driveStraightDistance(double speed, double distance){
-
+  public double[] getEncoders(){
+    double[] encoder = {leftEncoder.getPosition(), rightEncoder.getPosition()};
+    return encoder;
   }
+
 
   public void resetPose(Pose2d reset) {
     //odometry.reset;

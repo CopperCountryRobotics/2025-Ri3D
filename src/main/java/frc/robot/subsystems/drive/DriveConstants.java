@@ -25,7 +25,7 @@ public class DriveConstants {
   public static final int rightTwoCANID = 4;
 
   public static final double driveGearRatio = 12.0;
-  public static final double driveWheelRadius = Units.inchesToMeters(4.0);
+  public static final double driveWheelRadius = Units.inchesToMeters(3);
   public static final double divePositionConversionFactor = (2.0 * Math.PI * driveWheelRadius) / driveGearRatio;
   public static final double diveVelocityConversionFactor = driveGearRatio / 60.0;
 

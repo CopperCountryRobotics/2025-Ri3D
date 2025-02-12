@@ -4,17 +4,19 @@
 
 package frc.robot;
 
-import java.lang.annotation.Target;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.auton.ArmAuton;
+import frc.robot.auton.DriveDistance;
 import frc.robot.auton.WristAuton;
 import frc.robot.commands.AlgeLevelThree;
 import frc.robot.commands.AlgeLevelTwo;
@@ -87,16 +89,16 @@ public class RobotContainer {
     configureBindings();
 
     // doSomething in auton (PURELY for examples, needs to be changed)
-    chooser.setDefaultOption("Do Something", doSomething());
+    chooser.setDefaultOption("Do Something", driveAndScore());
+    chooser.addOption("Drive Dist", new DriveDistance(drive, .5, Units.inchesToMeters(15)));
 
     SmartDashboard.putData(chooser);
   }
 
   // Moving arm and wrist autonomously - can be used in both auton or be coded into a button on the controllers (PURELY for examples, needs to be changed)
-  private Command doSomething() {
-    return new ArmAuton(arm, 0.0)
-      .andThen(new WristAuton(wrist, 0.0));
-    }
+  private Command driveAndScore() {
+    return new ScoreLevelOne(arm, elevator, wrist).andThen(new DriveDistance(drive, .5, Units.inchesToMeters(75))).andThen(new ScoreLevelOne(arm, elevator, wrist));//.andThen(new IntakeCommand(intake, -.50).withTimeout(.25)).andThen(new WaitCommand(2)).andThen(new RobotHome(arm, elevator, wrist, flicker));
+  }
 
   private void configureBindings() {
 
@@ -139,6 +141,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return chooser.getSelected();
   }
 }

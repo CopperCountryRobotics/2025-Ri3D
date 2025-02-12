@@ -20,9 +20,8 @@ public class ScoreLevelTwo extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ArmToPosition(arm, ArmConstants.armVertical),
-      new ArmToPosition(arm, ArmConstants.armLevelTwo).alongWith(new ElevatorToPosition(elevator, ElevatorConstants.middleHeightCoral)), 
-      new WristToPosition(wrist, 0)
+      new ArmToPosition(arm, ArmConstants.armVertical).alongWith(new WristToPosition(wrist, 0)),
+      new ArmToPosition(arm, ArmConstants.armLevelTwo).alongWith(new ElevatorToPosition(elevator, ElevatorConstants.middleHeightCoral))
     );
   }
 }

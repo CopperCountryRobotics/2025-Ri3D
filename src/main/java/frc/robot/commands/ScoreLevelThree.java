@@ -19,9 +19,8 @@ public class ScoreLevelThree extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ArmToPosition(arm, ArmConstants.armLevelThree),
-      new ElevatorToPosition(elevator, 0), 
-      new WristToPosition(wrist, 0)
+      new ArmToPosition(arm, ArmConstants.armLevelThree).alongWith(new WristToPosition(wrist, 0)),
+      new ElevatorToPosition(elevator, 0)
     );
   }
 }

@@ -6,6 +6,9 @@ package frc.robot.subsystems.arm;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
+
+import java.sql.Driver;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -16,6 +19,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -25,6 +29,7 @@ public class Arm extends SubsystemBase {
     private SparkPIDController pidControllerArm;
     private RelativeEncoder encoderArm;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, kPosition;
+    private boolean isTele = false;
 
      public Arm(int armTwist) {
         this.arm = new CANSparkMax(armTwist, MotorType.kBrushless);
@@ -69,6 +74,14 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
+
+        if(isTele != DriverStation.isTeleop()){
+            if(!isTele && DriverStation.isTeleop()){
+                arm.set(0);
+            }
+            isTele = DriverStation.isTeleop();
+        }
+
         SmartDashboard.putNumber("Arm Encoder", encoderArm.getPosition());
         double p = SmartDashboard.getNumber("P Gain", 0);
         double i = SmartDashboard.getNumber("I Gain", 0);

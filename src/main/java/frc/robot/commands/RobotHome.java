@@ -9,6 +9,7 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.flicker.Flicker;
 import frc.robot.subsystems.wrist.Wrist;
+import frc.robot.subsystems.wrist.WristConstants;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -19,7 +20,7 @@ public class RobotHome extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new WristToPosition(wrist, 0),
+      new WristToPosition(wrist, WristConstants.wristHome),
       new ElevatorToPosition(elevator, 0),
       new ArmToPosition(arm, 0), 
       new FlickerArmToPosition(flicker, 0)
