@@ -120,9 +120,9 @@ public class Drivetrain extends SubsystemBase {
 
   public void arcadeDrive(double fwd, double turn, boolean slow) {
     if(slow){
-      drive.arcadeDrive(s1.calculate(fwd*.3), s2.calculate(turn*.3), true);
+      drive.arcadeDrive(s1.calculate(fwd*.4), s2.calculate(turn*.4), true);
     }else{
-      drive.arcadeDrive(s1.calculate(fwd), s2.calculate(turn), true);
+      drive.arcadeDrive(s1.calculate(fwd*.75), s2.calculate(turn*.75), true);
     }
   }
 

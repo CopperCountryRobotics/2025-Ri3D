@@ -90,7 +90,7 @@ public class RobotContainer {
 
     // doSomething in auton (PURELY for examples, needs to be changed)
     chooser.setDefaultOption("Do Something", driveAndScore());
-    chooser.addOption("Drive Dist", new DriveDistance(drive, .5, Units.inchesToMeters(15)));
+    chooser.addOption("Drive Dist", new DriveDistance(drive, .5, Units.inchesToMeters(75)));
 
     SmartDashboard.putData(chooser);
   }
@@ -128,7 +128,7 @@ public class RobotContainer {
     opController.button(1).onTrue(new ScoreLevelOne(arm, elevator, wrist));
 
     // //Intake
-    driverController.axisGreaterThan(2, .6).whileTrue(new IntakeCommand(intake, .35));
+    driverController.axisGreaterThan(2, .6).whileTrue(new IntakeCommand(intake, .65));
     driverController.button(5).onTrue(Commands.either(new IntakeCommand(intake, -.35).withTimeout(.1), new IntakeCommand(intake, -1).withTimeout(.1), ()->Math.abs(wrist.getPosition()) > 1));
 
     //Alge positions

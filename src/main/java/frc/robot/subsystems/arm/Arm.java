@@ -75,12 +75,6 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
 
-        if(isTele != DriverStation.isTeleop()){
-            if(!isTele && DriverStation.isTeleop()){
-                arm.set(0);
-            }
-            isTele = DriverStation.isTeleop();
-        }
 
         SmartDashboard.putNumber("Arm Encoder", encoderArm.getPosition());
         double p = SmartDashboard.getNumber("P Gain", 0);
